@@ -6,6 +6,7 @@ class Layout extends React.Component {
     return (
      <div>
        <NavBar leftContent=""> 我的 </NavBar>
+       
      </div> 
     )
   }
