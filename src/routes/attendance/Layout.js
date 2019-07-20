@@ -1,5 +1,5 @@
 import React from 'react';
-import {NavBar,Tabs,Grid,Button, List,SegmentedControl } from 'antd-mobile';
+import {NavBar,Tabs,Grid, List,SegmentedControl } from 'antd-mobile';
 import { Chart,Geom,Axis,Tooltip,Coord,Guide } from 'bizcharts';
 import DataSet from "@antv/data-set";
 const Item = List.Item;
