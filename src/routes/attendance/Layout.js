@@ -1,9 +1,10 @@
 import React from 'react';
-import {NavBar,Tabs,Grid,List,Toast,Modal,Tag,NoticeBar,Icon } from 'antd-mobile';
+import {NavBar,Tabs,Grid,List,Modal,Tag,NoticeBar,Icon } from 'antd-mobile';
 import { Chart,Geom,Axis,Tooltip,Coord,Guide } from 'bizcharts';
 import DataSet from "@antv/data-set";
 import axios from '../../http';
 const Item = List.Item;
+const _ = require('lodash');
 function closest(el, selector) {
   const matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector;
   while (el) {
@@ -19,7 +20,14 @@ class Layout extends React.Component {
     super(props);
     this.state = {
       // 实时统计总数据
-      realTimeTotalData:{total:0},
+      realTimeTotalData:{
+        total:0
+      },
+      // 周统计总数据
+      weekTimeTotalData:{
+        total:0,
+        normalTotal:0
+      },
       // 模态框的显示与隐藏
       modal:false,
       // 模态框标题
@@ -73,6 +81,7 @@ class Layout extends React.Component {
   }
   componentDidMount(){
     this.findRealTimeData();
+    this.findWeekTimeData();
   }
   //查找实时统计数据
   findRealTimeData(){
@@ -112,22 +121,22 @@ class Layout extends React.Component {
   }
   //查找周统计数据
   findWeekTimeData(){
-    axios.get('/attendace/getAttendanceResult').then((res)=>{
+    axios.get('/attendace/getWeekAttendanceResult').then((res)=>{
       this.setState({
-        realTimeTotalData:res.data,
+        weekTimeTotalData:res.data,
         weekMonthData:[{
           name:'未打卡',
-          num:0,
+          num:res.data.notSingnedTotal,
         },{
           name:'迟到',
-          num:0,
+          num:res.data.lateTotal,
         },{
           name:'早退',
-          num:0,
+          num:res.data.earlyTotal,
         },{
           name:'严重迟到',
-          num:0,
-        }],
+          num:res.data.seriousLateTotal,
+        }]
       });
     }).catch((error)=>{
       console.log(error);
@@ -135,11 +144,12 @@ class Layout extends React.Component {
   }
   // 点击了tab键，向后台发送请求
   tabClick = (tab, index)=>{
-    console.log(tab);
+    // console.log(tab);
     if(index===1){
-      this.setState({
+      /* this.setState({
         // timeType:'周'
-      });
+      }); */
+      this.findWeekTimeData();
     }else{
       this.findRealTimeData();
     }
@@ -153,7 +163,7 @@ class Layout extends React.Component {
   } */
   // 查看考勤详情
   showDetails = (staticType,checkType,event)=>{
-    console.log(staticType,checkType);
+    // console.log(staticType,checkType);
     var dData = [];
     if(staticType==='实时统计'){
       if(checkType==='未打卡'){
@@ -170,23 +180,24 @@ class Layout extends React.Component {
       }
     }
     if(staticType==='周统计'){
-      /* if(checkType==='未打卡'){
-        dData = this.state.realTimeTotalData.notSingned;
+      if(checkType==='未打卡'){
+        dData = this.state.weekTimeTotalData.notSingned;
       }
       if(checkType==='迟到'){
-        dData = this.state.realTimeTotalData.late;
+        dData = this.state.weekTimeTotalData.late;
       }
       if(checkType==='早退'){
-        dData = this.state.realTimeTotalData.early;
+        dData = this.state.weekTimeTotalData.early;
       }
       if(checkType==='严重迟到'){
-        dData = this.state.realTimeTotalData.serious;
-      } */
+        dData = this.state.weekTimeTotalData.serious;
+      }
     }
     /* console.log(dData.indexOf('高慧银'));
     if(dData.indexOf('高慧银')!==-1){
       dData.splice(dData.indexOf('高慧银'),1);
     } */
+    dData = _.uniq(dData);
     this.setState({
       modal:true,
       modalTitle:staticType+'-'+checkType,
@@ -306,7 +317,7 @@ class Layout extends React.Component {
               </div>
             </div> */}
             <NoticeBar style={{height:'50px',lineHeight:'50px',fontSize:'16px'}} icon={<Icon style={{marginRight:'4px'}} type="check-circle-o" size="md" />}>
-              总打卡次数：234次
+              总打卡次数：{this.state.weekTimeTotalData.total}次，正常打卡次数：{this.state.weekTimeTotalData.normalTotal}
             </NoticeBar>
             {/* 统计信息 */}
             <div className="time-details">
