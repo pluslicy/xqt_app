@@ -15,8 +15,8 @@ class Layout extends React.Component {
         }catch(e){
 
         };
-       
-        // document.body.removeChild(el);
+        //移除 
+        document.getElementById("cc").removeChild(el);
     }
   }
 
@@ -26,7 +26,7 @@ class Layout extends React.Component {
 
   render(){
     return (
-     <div style={{height:'100%'}}>
+     <div id="cc" style={{height:'100%'}}>
        <NavBar leftContent=""> 视频监控 </NavBar>
        {/* 视频流 */}
        <iframe id='videoFrame' style={{width: '100%',height:'100%',border: '0', padding: 0,margin: 0}} src="http://134.175.154.93/rtmp.html"></iframe>

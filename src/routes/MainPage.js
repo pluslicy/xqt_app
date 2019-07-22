@@ -18,7 +18,7 @@ class MainPage extends React.Component {
             unselectedTintColor="#949494"
             tintColor="#33A3F4"
             barTintColor="white"
-            hidden={this.state.hidden}>
+            hidden={this.props.location.pathname === '/login'}>
             {/* 考勤  */}
             <TabBar.Item
               title="考勤"
