@@ -3,3 +3,6 @@
   background-color: #008AE6;
   color: #FFF;
 }
+.my-list .spe .am-list-extra {
+  flex-basis: initial;
+}
