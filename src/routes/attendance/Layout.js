@@ -19,6 +19,8 @@ class Layout extends React.Component {
   constructor(props){
     super(props);
     this.state = {
+      // 加载模态框
+      loadingmodal:true,
       // 实时统计总数据
       realTimeTotalData:{
         total:0
@@ -85,13 +87,15 @@ class Layout extends React.Component {
   }
   //查找实时统计数据
   findRealTimeData(){
-   /*  Toast.loading('加载中...', 30, () => {
-      console.log('Load complete !!!');
-    }); */
+    this.setState({
+      loadingmodal:true
+    });
     axios.get('/attendace/getAttendanceResult').then((res)=>{
-      /* if(res.status===200){
-        Toast.hide();
-      } */
+      if(res.status===200){
+        this.setState({
+          loadingmodal:false
+        });
+      }
       this.setState({
         realTimeTotalData:res.data,
         realTimeData:[{
@@ -121,7 +125,15 @@ class Layout extends React.Component {
   }
   //查找周统计数据
   findWeekTimeData(){
+    this.setState({
+      loadingmodal:true
+    });
     axios.get('/attendace/getWeekAttendanceResult').then((res)=>{
+      if(res.status===200){
+        this.setState({
+          loadingmodal:false
+        });
+      }
       this.setState({
         weekTimeTotalData:res.data,
         weekMonthData:[{
@@ -317,7 +329,7 @@ class Layout extends React.Component {
               </div>
             </div> */}
             <NoticeBar style={{height:'50px',lineHeight:'50px',fontSize:'16px'}} icon={<Icon style={{marginRight:'4px'}} type="check-circle-o" size="md" />}>
-              总打卡次数：{this.state.weekTimeTotalData.total}次，正常打卡次数：{this.state.weekTimeTotalData.normalTotal}
+              总打卡次数：{this.state.weekTimeTotalData.total}次，正常次数：{this.state.weekTimeTotalData.normalTotal}次
             </NoticeBar>
             {/* 统计信息 */}
             <div className="time-details">
@@ -347,8 +359,8 @@ class Layout extends React.Component {
           wrapProps={{ onTouchStart: this.onWrapTouchStart }}
         >
           <div style={{ height: '300px', overflow: 'scroll' }}>
-            <Grid data={this.state.detailsData}
-                columnNum={4}
+            <Grid hasLine={false} data={this.state.detailsData}
+                columnNum={3}
                 renderItem={item => (
                   <div style={{ padding: '0 12px' }}>
                     <div style={{ color: 'white', fontSize: '24px',background:'#008AE6'}}>
@@ -362,6 +374,16 @@ class Layout extends React.Component {
                 )}
               />
           </div>
+        </Modal>
+        <Modal style={{width:'50%'}}
+          visible={this.state.loadingmodal}
+          transparent
+          maskClosable={false}
+          onClose={this.onClose}
+          wrapProps={{ onTouchStart: this.onWrapTouchStart }}>
+            <span>
+            数据加载中，请稍等...
+            </span>
         </Modal>
      </div> 
     )
